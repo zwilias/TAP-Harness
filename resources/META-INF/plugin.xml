@@ -1,0 +1,23 @@
+<idea-plugin version="2">
+    <id>xyz.zwilias.idea.tap-harness</id>
+    <name>TAP Harness</name>
+    <version>1.0</version>
+    <category>HTML/JavaScript Development</category>
+
+    <description><![CDATA[
+      Parse TAP output and turn your JetBrains IDE into a test-harness
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="145.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <configurationType implementation="xyz.zwilias.idea.tap.configuration.TapConfigurationType"/>
+        <runConfigurationProducer implementation="xyz.zwilias.idea.tap.configuration.TapRunConfigurationProducer"/>
+    </extensions>
+</idea-plugin>
