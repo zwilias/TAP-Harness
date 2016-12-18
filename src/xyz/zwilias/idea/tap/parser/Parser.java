@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.zwilias.idea.tap.parser.event.*;
 import xyz.zwilias.idea.tap.parser.handler.LineHandler;
 import xyz.zwilias.idea.tap.parser.handler.TestPassedHandler;
+import xyz.zwilias.idea.tap.parser.handler.YamlHandler;
 
 import java.io.InputStream;
 import java.util.*;
@@ -22,6 +23,7 @@ public class Parser implements Runnable {
         this.stream = stream;
         this.state = new State();
 
+        handlers.add(new YamlHandler(this.state));
         handlers.add(new TestPassedHandler(this.state, this::fire));
     }
 

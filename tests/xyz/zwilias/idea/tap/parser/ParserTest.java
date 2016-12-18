@@ -47,6 +47,10 @@ public class ParserTest {
         writeStrings(
                 "NOT OK this is not ok",
                 "OK this is a pass",
+                "---",
+                "diagnostics go here",
+                "on multiple lines",
+                "...",
                 "ok this is also a pass",
                 "   ok",
                 "ok SKIP"

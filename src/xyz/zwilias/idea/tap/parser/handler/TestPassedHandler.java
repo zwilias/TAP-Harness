@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class TestPassedHandler extends AbstractHandler {
     private String line;
-    private Object diagnostics;
+    private String diagnostics;
 
     public TestPassedHandler(State state, FireDelegate fireDelegate) {
         super(Pattern.compile("^\\s*OK\\s+.*$", Pattern.CASE_INSENSITIVE), state, fireDelegate);
@@ -24,12 +24,12 @@ public class TestPassedHandler extends AbstractHandler {
     }
 
     @Override
-    public void addDiagnostics(Object diagnostics) {
+    public void addDiagnostics(String diagnostics) {
         this.diagnostics = diagnostics;
     }
 
     @Override
     public Event createEvent() {
-        return new TestPassedEvent();
+        return new TestPassedEvent(this.diagnostics);
     }
 }

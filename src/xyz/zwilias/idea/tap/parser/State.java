@@ -47,6 +47,10 @@ public class State {
         }
     }
 
+    public LineHandler getPreviousHandler() {
+        return this.previousHandler;
+    }
+
     public void setPreviousHandler(LineHandler handler) {
         this.previousHandler = handler;
     }
