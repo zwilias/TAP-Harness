@@ -2,43 +2,45 @@ package xyz.zwilias.idea.tap.parser;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.zwilias.idea.tap.parser.event.*;
+import xyz.zwilias.idea.tap.parser.handler.LineHandler;
+import xyz.zwilias.idea.tap.parser.handler.TestPassedHandler;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class Parser implements Runnable {
     private final InputStream stream;
     private final Map<Class<?>, Consumer<?>> consumerMap = new HashMap<>();
+    private final State state;
     private boolean closed = false;
+    private final List<LineHandler> handlers = new LinkedList<>();
 
-    private static final Consumer<Event> DO_NOTHING = event -> {};
+    private static final Consumer<Event> DO_NOTHING = event -> {
+    };
 
     private Parser(InputStream stream) {
         this.stream = stream;
+        this.state = new State();
+
+        handlers.add(new TestPassedHandler(this.state, this::fire));
     }
-
-
-    private static final Pattern PATTERN_SKIP_TEST = Pattern.compile("^[^#]*#\\s*SKIP\\S*\\s+(.*)");
-    private static final Pattern PATTERN_PASS_TEST = Pattern.compile("^\\s*OK\\s+.*$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern PATTERN_FAIL_TEST = Pattern.compile("^\\s*NOT OK\\s+.*$", Pattern.CASE_INSENSITIVE);
 
     public void run() {
         Scanner scanner = new Scanner(stream);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
 
-            if (PATTERN_SKIP_TEST.matcher(line).matches()) {
-                fire(new TestSkippedEvent());
-            } else if (PATTERN_PASS_TEST.matcher(line).matches()) {
-                fire(new TestPassedEvent());
-            } else if (PATTERN_FAIL_TEST.matcher(line).matches()) {
-                fire(new TestFailedEvent());
-            }
+            this.handlers
+                    .stream()
+                    .filter(handler -> handler.shouldHandle(line))
+                    .findFirst()
+                    .ifPresent(handler -> {
+                        handler.handle(line);
+                        state.setPreviousHandler(handler);
+                    });
         }
 
+        state.finishPreviousHandler();
         scanner.close();
         closed = true;
     }
@@ -57,7 +59,7 @@ public class Parser implements Runnable {
 
     @SuppressWarnings("unchecked")
     private <T extends Event> void fire(T event) {
-        ((Consumer<T>)getConsumerFor(event.getClass())).consume(event);
+        ((Consumer<T>) getConsumerFor(event.getClass())).consume(event);
     }
 
     public Parser onTestPassed(Consumer<TestPassedEvent> consumer) {
