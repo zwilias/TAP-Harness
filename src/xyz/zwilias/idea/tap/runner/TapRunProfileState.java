@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.zwilias.idea.tap.configuration.TapRunConfiguration;
 
+import java.io.IOException;
+
 public class TapRunProfileState implements RunProfileState {
     private final TapRunConfiguration configuration;
 
@@ -22,7 +24,12 @@ public class TapRunProfileState implements RunProfileState {
     @Nullable
     @Override
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner programRunner) throws ExecutionException {
-        TapExecutionSession session = new TapExecutionSession(configuration.getProject(), configuration, executor);
+        TapExecutionSession session;
+        try {
+            session = new TapExecutionSession(configuration.getProject(), configuration, executor);
+        } catch (IOException e) {
+            throw new ExecutionException(e);
+        }
         SMTRunnerConsoleView consoleView = session.getConsoleView();
         ProcessHandler processHandler = session.getProcessHandler();
 

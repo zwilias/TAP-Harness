@@ -8,6 +8,7 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -27,7 +28,7 @@ class TapExecutionSession {
     private final SMTRunnerConsoleView consoleView;
     private final ProcessHandler processHandler;
 
-    TapExecutionSession(Project project, TapRunConfiguration configuration, Executor executor) throws ExecutionException {
+    TapExecutionSession(Project project, TapRunConfiguration configuration, Executor executor) throws ExecutionException, IOException {
         this.project = project;
         this.configuration = configuration;
         this.executor = executor;
@@ -50,7 +51,7 @@ class TapExecutionSession {
     }
 
     @NotNull
-    private ProcessHandler getOSProcessHandler() throws ExecutionException {
+    private ProcessHandler getOSProcessHandler() throws ExecutionException, IOException {
         GeneralCommandLine commandLine = createCommandLine();
         OSProcessHandler commandLineProcess = new KillableColoredProcessHandler(commandLine);
         ProcessTerminatedListener.attach(commandLineProcess);
@@ -63,6 +64,13 @@ class TapExecutionSession {
             @Override
             public void startNotified(ProcessEvent event) {
                 adapter.forwardStartNotify();
+            }
+        });
+
+        smtProcessHandler.addProcessListener(new ProcessAdapter() {
+            @Override
+            public void startNotified(ProcessEvent event) {
+                ApplicationManager.getApplication().executeOnPooledThread(adapter.getRunnable());
             }
         });
 

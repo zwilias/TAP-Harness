@@ -43,11 +43,13 @@ public class Parser implements Runnable {
         }
 
         state.finishPreviousHandler();
+        fire(new AllDoneEvent());
+
         scanner.close();
         closed = true;
     }
 
-    public boolean isClosed() {
+    boolean isClosed() {
         return closed;
     }
 
@@ -81,6 +83,11 @@ public class Parser implements Runnable {
 
     public Parser onTestTodo(Consumer<TestTodoEvent> consumer) {
         consumerMap.put(TestTodoEvent.class, consumer);
+        return this;
+    }
+
+    public Parser onAllDone(Consumer<AllDoneEvent> consumer) {
+        consumerMap.put(AllDoneEvent.class, consumer);
         return this;
     }
 
