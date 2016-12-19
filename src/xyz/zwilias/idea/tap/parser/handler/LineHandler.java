@@ -5,6 +5,6 @@ import org.jetbrains.annotations.NotNull;
 public interface LineHandler {
     boolean shouldHandle(@NotNull String line);
     void handle(@NotNull String line);
-    void addDiagnostics(String diagnostics);
+    void addDiagnostics(Object diagnostics);
     void finish();
 }

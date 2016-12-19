@@ -2,6 +2,7 @@ package xyz.zwilias.idea.tap.parser.handler;
 
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.Yaml;
 import xyz.zwilias.idea.tap.parser.State;
 
 import java.util.regex.Pattern;
@@ -36,11 +37,6 @@ public class YamlHandler implements LineHandler {
 
         if (state.isInYaml() && END_YAML_BLOCK.matcher(line).matches()) {
             state.setInYaml(false);
-            if (this.previousHandler != null) {
-                this.previousHandler.addDiagnostics(buffer.toString());
-            } else {
-                LOG.warn("Tried to add diagnostics without previous handler...");
-            }
             return;
         }
 
@@ -48,13 +44,18 @@ public class YamlHandler implements LineHandler {
     }
 
     @Override
-    public void addDiagnostics(String diagnostics) {
+    public void addDiagnostics(Object diagnostics) {
         LOG.error("Trying to add diagnostics to self...");
     }
 
     @Override
     public void finish() {
         if (this.previousHandler != null) {
+
+            Yaml yamlParser = new Yaml();
+
+            this.previousHandler.addDiagnostics(yamlParser.load(buffer.toString()));
+
             this.previousHandler.finish();
         } else {
             LOG.warn("Trying to finish without previous handler...");

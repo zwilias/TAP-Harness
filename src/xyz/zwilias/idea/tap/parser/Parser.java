@@ -23,8 +23,7 @@ public class Parser implements Runnable {
 
         handlers.addAll(Arrays.asList(
                 new YamlHandler(this.state),
-                new TestPassedHandler(this.state, this::fire),
-                new TestFailedHandler(this.state, this::fire)
+                new TestHandler(this.state, this::fire)
         ));
     }
 

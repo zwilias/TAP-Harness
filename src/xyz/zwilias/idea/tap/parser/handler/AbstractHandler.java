@@ -27,7 +27,7 @@ public abstract class AbstractHandler implements LineHandler {
 
     abstract public void handleLine(String line);
 
-    public void handle(String line) {
+    public void handle(@NotNull String line) {
         this.state.finishPreviousHandler();
         handleLine(line);
     }

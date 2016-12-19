@@ -1,12 +1,12 @@
 package xyz.zwilias.idea.tap.parser.event;
 
-public abstract class AbstractTestEvent implements Event {
+public abstract class AbstractTestEvent implements TestEvent {
     protected final String tapLine;
     protected final String name;
     protected final String testNumber;
-    protected final String diagnostics;
+    protected final Object diagnostics;
 
-    public AbstractTestEvent(String tapLine, String name, String testNumber, String diagnostics) {
+    public AbstractTestEvent(String tapLine, String name, String testNumber, Object diagnostics) {
         this.tapLine = tapLine;
         this.name = name;
         this.testNumber = testNumber;
@@ -25,7 +25,7 @@ public abstract class AbstractTestEvent implements Event {
         return testNumber;
     }
 
-    public String getDiagnostics() {
+    public Object getDiagnostics() {
         return diagnostics;
     }
 }

@@ -17,14 +17,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class TestPassedHandlerTest {
-    private TestPassedHandler handler;
+public class TestHandlerTest {
+    private TestHandler handler;
     private AbstractHandler.FireDelegate fireDelegate;
 
     @Before
     public void setUp() throws Exception {
         State state = new State();
-        handler = new TestPassedHandler(state, fireDelegate);
+        handler = new TestHandler(state, fireDelegate);
     }
 
     @After
@@ -46,6 +46,7 @@ public class TestPassedHandlerTest {
 
     public static List<String> provideMatchingLines() {
         return Arrays.asList(
+                "not ok",
                 "OK",
                 "ok",
                 "    ok",
@@ -56,7 +57,6 @@ public class TestPassedHandlerTest {
 
     public static List<String> provideNotMatchingLines() {
         return Arrays.asList(
-                "not ok",
                 "",
                 "# OK",
                 "bla ok",
