@@ -52,8 +52,8 @@ public class ParserTest {
                 "on multiple lines",
                 "...",
                 "ok this is also a pass",
-                "   ok",
-                "ok SKIP"
+                "   ok ?",
+                "ok #SKIP"
         );
 
         assertThat(events.size(), is(3));

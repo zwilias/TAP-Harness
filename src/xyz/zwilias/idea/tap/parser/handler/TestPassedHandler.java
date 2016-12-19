@@ -12,13 +12,11 @@ public class TestPassedHandler extends AbstractHandler {
     private String diagnostics;
 
     public TestPassedHandler(State state, FireDelegate fireDelegate) {
-        super(Pattern.compile("^\\s*OK\\s+.*$", Pattern.CASE_INSENSITIVE), state, fireDelegate);
+        super(Pattern.compile("^\\s*OK\\b.*$", Pattern.CASE_INSENSITIVE), state, fireDelegate);
     }
 
     @Override
-    public void handle(@NotNull String line) {
-        this.handlePrevious();
-
+    public void handleLine(@NotNull String line) {
         this.line = line;
         this.diagnostics = null;
     }
@@ -28,8 +26,9 @@ public class TestPassedHandler extends AbstractHandler {
         this.diagnostics = diagnostics;
     }
 
+    @NotNull
     @Override
     public Event createEvent() {
-        return new TestPassedEvent(this.diagnostics);
+        return new TestPassedEvent(this.line, this.diagnostics);
     }
 }

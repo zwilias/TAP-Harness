@@ -25,8 +25,11 @@ public abstract class AbstractHandler implements LineHandler {
         this.fireDelegate.fire(event);
     }
 
-    void handlePrevious() {
+    abstract public void handleLine(String line);
+
+    public void handle(String line) {
         this.state.finishPreviousHandler();
+        handleLine(line);
     }
 
     @Override
@@ -38,5 +41,6 @@ public abstract class AbstractHandler implements LineHandler {
         this.fire(createEvent());
     }
 
+    @NotNull
     abstract protected Event createEvent();
 }
