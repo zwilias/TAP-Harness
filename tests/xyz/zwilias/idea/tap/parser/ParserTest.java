@@ -1,10 +1,12 @@
 package xyz.zwilias.idea.tap.parser;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import xyz.zwilias.idea.tap.parser.event.TestFailedEvent;
 import xyz.zwilias.idea.tap.parser.event.TestPassedEvent;
 import xyz.zwilias.idea.tap.parser.event.TestSkippedEvent;
+import xyz.zwilias.idea.tap.parser.event.TestTodoEvent;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -23,6 +25,11 @@ public class ParserTest {
         writer = new OutputStreamWriter(outputStream);
 
         parser = Parser.parseStream(new PipedInputStream(outputStream));
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        writer.close();
     }
 
     private void writeStrings(String... strings) throws IOException, InterruptedException {
@@ -57,6 +64,23 @@ public class ParserTest {
         );
 
         assertThat(events.size(), is(3));
+    }
+
+    @Test
+    public void onTestTodo() throws IOException, InterruptedException {
+        List<TestTodoEvent> events = new LinkedList<>();
+
+        parser.onTestTodo(events::add);
+
+        writeStrings(
+                "NOT OK this is not ok",
+                "OK this is a pass",
+                "ok #TODO is also a pass",
+                "   ok",
+                "ok SKIP"
+        );
+
+        assertThat(events.size(), is(1));
     }
 
     @Test

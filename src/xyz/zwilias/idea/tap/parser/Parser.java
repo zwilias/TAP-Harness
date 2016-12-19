@@ -23,7 +23,6 @@ public class Parser implements Runnable {
 
         handlers.addAll(Arrays.asList(
                 new YamlHandler(this.state),
-                new TestSkippedHandler(this.state, this::fire),
                 new TestPassedHandler(this.state, this::fire),
                 new TestFailedHandler(this.state, this::fire)
         ));
@@ -78,6 +77,11 @@ public class Parser implements Runnable {
 
     public Parser onTestSkipped(Consumer<TestSkippedEvent> consumer) {
         consumerMap.put(TestSkippedEvent.class, consumer);
+        return this;
+    }
+
+    public Parser onTestTodo(Consumer<TestTodoEvent> consumer) {
+        consumerMap.put(TestTodoEvent.class, consumer);
         return this;
     }
 
