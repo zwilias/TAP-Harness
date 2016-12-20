@@ -3,6 +3,7 @@ package xyz.zwilias.idea.tap.parser;
 import org.jetbrains.annotations.NotNull;
 import xyz.zwilias.idea.tap.parser.event.*;
 import xyz.zwilias.idea.tap.parser.handler.*;
+import xyz.zwilias.idea.tap.tree.TestTree;
 
 import java.io.InputStream;
 import java.util.*;
@@ -47,6 +48,13 @@ public class Parser implements Runnable {
 
         scanner.close();
         closed = true;
+    }
+
+    public TestTree getTreeModel() {
+        TestTree tree = new TestTree();
+        tree.attachToParser(this);
+
+        return tree;
     }
 
     boolean isClosed() {
